@@ -1,0 +1,16 @@
+{
+  "name": "tiny-iptv-server",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "iptv-playlist-parser": "^0.5.0",
+    "koa": "^2.13.0"
+  }
+}
