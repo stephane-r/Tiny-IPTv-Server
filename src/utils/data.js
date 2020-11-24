@@ -12,25 +12,26 @@ const getCategories = (data) => {
   return categories;
 };
 
-const filterDataByCountry = (country, data = parseM3uFile()) =>
+const filterDataByCountry = (data, country) =>
   data.filter((p) => p.group.title.includes(`${country} `));
 
-const saveData = (data, filename) =>
-  fs.writeFile(
-    path.resolve(`${filename}.json`),
-    JSON.stringify(data),
-    "utf8",
-    (error) => {
-      if (error) {
-        return console.log(error);
-      }
+// const saveData = (data, filename) =>
+//   fs.writeFile(
+//     path.resolve(`${filename}.json`),
+//     JSON.stringify(data),
+//     "utf8",
+//     (error) => {
+//       if (error) {
+//         return console.log(error);
+//       }
 
-      return console.log("Saved with success");
-    }
-  );
+//       return console.log("Saved with success");
+//     }
+//   );
 
-const parseData = (country) => {
-  const playlists = filterDataByCountry(country);
+const parseData = (fileId, country) => {
+  const fileData = parseM3uFile(path.resolve(`playlists/${fileId}.m3u`));
+  const playlists = filterDataByCountry(fileData, country);
   const data = {};
 
   playlists.map((p) => {
@@ -43,13 +44,28 @@ const parseData = (country) => {
     return p;
   });
 
-  saveData(data, country);
+  // saveData(data, country);
 
   return data;
 };
 
+const getData = (fileId, country) => {
+  const data = parseData(fileId, country);
+
+  if (!data) {
+    return {
+      error: "Invalid data",
+    };
+  }
+
+  return {
+    categories: getCategories(data),
+    data,
+  };
+};
+
 module.exports = {
   getCategories,
-  filterDataByCountry,
   parseData,
+  getData,
 };

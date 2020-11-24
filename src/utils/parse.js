@@ -1,8 +1,7 @@
 const fs = require("fs");
 const parser = require("iptv-playlist-parser");
-const { file } = require("../constants");
 
-const parseM3uFile = () =>
+const parseM3uFile = (file) =>
   parser.parse(fs.readFileSync(file, { encoding: "utf8" })).items;
 
 module.exports = {
