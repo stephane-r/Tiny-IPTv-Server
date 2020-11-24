@@ -29,8 +29,8 @@ const filterDataByCountry = (data, country) =>
 //     }
 //   );
 
-const parseData = (fileId, country) => {
-  const fileData = parseM3uFile(path.resolve(`playlists/${fileId}.m3u`));
+const parseData = (playlistId, country) => {
+  const fileData = parseM3uFile(path.resolve(`playlists/${playlistId}.m3u`));
   const playlists = filterDataByCountry(fileData, country);
   const data = {};
 
@@ -49,8 +49,8 @@ const parseData = (fileId, country) => {
   return data;
 };
 
-const getData = (fileId, country) => {
-  const data = parseData(fileId, country);
+const getData = (playlistId, country) => {
+  const data = parseData(playlistId, country);
 
   if (!data) {
     return {

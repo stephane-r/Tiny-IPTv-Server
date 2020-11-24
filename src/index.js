@@ -11,20 +11,20 @@ const app = new Koa();
 const router = new Router();
 
 router.post("/playlist", async (ctx) => {
-  const fileId = uuidv4();
+  const playlistId = uuidv4();
   fs.writeFileSync(
-    path.resolve(`playlists/${fileId}.m3u`),
+    path.resolve(`playlists/${playlistId}.m3u`),
     await download(ctx.request.body.url)
   );
 
   ctx.body = {
-    fileId,
+    playlistId,
   };
 });
 
 router.get("/playlist", (ctx) => {
-  const { fileId, country } = ctx.request.query;
-  ctx.body = getData(fileId, String(country).toUpperCase());
+  const { playlistId, country } = ctx.request.query;
+  ctx.body = getData(playlistId, String(country).toUpperCase());
 });
 
 app.use(bodyParser());
