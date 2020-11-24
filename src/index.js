@@ -1,16 +1,21 @@
+const path = require("path");
+const fs = require("fs");
 const Koa = require("koa");
 const Router = require("koa-router");
 const bodyParser = require("koa-bodyparser");
 const { v4: uuidv4 } = require("uuid");
 const { getData } = require("./utils/data");
-const { downloadFile } = require("./utils/file");
+const download = require("download");
 
 const app = new Koa();
 const router = new Router();
 
-router.post("/playlist", (ctx) => {
+router.post("/playlist", async (ctx) => {
   const fileId = uuidv4();
-  downloadFile(ctx.request.body.url, fileId);
+  fs.writeFileSync(
+    path.resolve(`playlists/${fileId}.m3u`),
+    await download(ctx.request.body.url)
+  );
 
   ctx.body = {
     fileId,
