@@ -12,6 +12,7 @@ const router = new Router();
 
 router.post("/playlist", async (ctx) => {
   const playlistId = uuidv4();
+
   fs.writeFileSync(
     path.resolve(`playlists/${playlistId}.m3u`),
     await download(ctx.request.body.url)

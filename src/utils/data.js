@@ -1,5 +1,5 @@
 const { parseM3uFile } = require("./parse");
-const fs = require("fs");
+// const fs = require("fs");
 const path = require("path");
 
 const getCategories = (data) => {
@@ -46,7 +46,69 @@ const parseData = (playlistId, country) => {
 
   // saveData(data, country);
 
-  return data;
+  return getPlaylistsByQualityGroup(data);
+};
+
+//
+// GET PLAYLISTS BY QUALITY AND BY GROUP
+//
+// Current DATA structure :
+// {
+//   [qualityName]: [],
+//   [qualityName]: []
+// }
+
+// Wanted DATA structure :
+// {
+//   [qualityName]: [
+//     {
+//       title: [groupName],
+//       items: [
+//         {
+//           ...
+//         },
+//         ...
+//       ]
+//     }
+//   ]
+// }
+
+const getPlaylistsByQualityGroup = (data) => {
+  const DEFAULT_GROUP_NAME = "Default";
+  const dataUpdated = {};
+
+  Object.entries(data).forEach(([quality, items]) => {
+    let currentGroupName = DEFAULT_GROUP_NAME;
+    const groupQuality = [
+      {
+        title: DEFAULT_GROUP_NAME,
+        items: [],
+      },
+    ];
+
+    items.map((item) => {
+      const isGroupName = item.name.includes("▀▄");
+
+      if (isGroupName) {
+        currentGroupName = item.name;
+
+        groupQuality.push({
+          title: currentGroupName,
+          items: [],
+        });
+      } else {
+        const groupName = groupQuality.find(
+          (g) => g.title === currentGroupName
+        );
+        groupName.items.push(item);
+        groupQuality[currentGroupName] = groupName;
+      }
+    });
+
+    dataUpdated[quality] = groupQuality;
+  });
+
+  return dataUpdated;
 };
 
 const getData = (playlistId, country) => {
