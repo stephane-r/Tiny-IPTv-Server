@@ -25,6 +25,7 @@ router.post("/playlist", async (ctx) => {
 
 router.get("/playlist", (ctx) => {
   const { playlistId, country } = ctx.request.query;
+  console.log(`${playlistId} request`);
   ctx.body = getData(playlistId, String(country).toUpperCase());
 });
 

@@ -15,8 +15,6 @@ const getPlaylistsByChannelQuality = (playlists) => {
     return p;
   });
 
-  console.log(Object.entries(data));
-
   Object.entries(data).forEach(([quality, items]) => {
     let currentGroupName = DEFAULT_GROUP_NAME;
     const groupQuality = [
@@ -75,7 +73,6 @@ const getPlaylistsByChannelGroup = (playlists) => {
 
     switch (true) {
       case isGroupName:
-        console.log(p.name);
         currentGroupName = toPascalCase(
           p.name.replace(/[^a-zA-Z0-9]/g, "").replace("FR", "")
         );
