@@ -1,6 +1,10 @@
 const { parseM3uFile } = require("./parse");
 const path = require("path");
 const toPascalCase = require("./pascalCase");
+const {
+  getPlaylistsByChannelGroup,
+  getPlaylistsByChannelQuality,
+} = require("./filter");
 
 const getCategories = (data) => {
   const categories = [];
@@ -18,46 +22,8 @@ const filterDataByCountry = (data, country) =>
 const parseData = (playlistId, country) => {
   const fileData = parseM3uFile(path.resolve(`playlists/${playlistId}.m3u`));
   const playlists = filterDataByCountry(fileData, country);
-  const DEFAULT_GROUP_NAME = "Default";
-  const SPORT_GROUP_NAME = "Sport";
-  const items = [];
-  const data = {
-    [DEFAULT_GROUP_NAME]: {
-      title: DEFAULT_GROUP_NAME,
-      items,
-    },
-    [SPORT_GROUP_NAME]: {
-      title: "Sport",
-      items,
-    },
-  };
-  let currentGroupName = DEFAULT_GROUP_NAME;
 
-  playlists.map((p) => {
-    const isGroupName = p.name.includes("▀▄");
-    const isSportChannel = p.group.title.includes(SPORT_GROUP_NAME);
-
-    switch (true) {
-      case isGroupName:
-        console.log(p.name);
-        currentGroupName = toPascalCase(
-          p.name.replace(/[^a-zA-Z0-9]/g, "").replace("FR", "")
-        );
-        data[currentGroupName] = {
-          title: currentGroupName,
-          items: [],
-        };
-        break;
-      case isSportChannel:
-        data[SPORT_GROUP_NAME].items = [...data[SPORT_GROUP_NAME].items, p];
-        break;
-      default:
-        data[currentGroupName].items = [...data[currentGroupName].items, p];
-        break;
-    }
-  });
-
-  return data;
+  return getPlaylistsByChannelQuality(playlists);
 };
 
 const getData = (playlistId, country) => {
