@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  tiny_iptv:
+    build: .
+    ports:
+      - 8083:3000
+    volumes:
+      - .:/app
