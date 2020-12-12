@@ -1,6 +1,5 @@
 const { parseM3uFile } = require("./parse");
 const path = require("path");
-const toPascalCase = require("./pascalCase");
 const {
   getPlaylistsByChannelGroup,
   getPlaylistsByChannelQuality,

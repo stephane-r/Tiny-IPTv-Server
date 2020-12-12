@@ -6,10 +6,21 @@ const getPlaylistsByChannelQuality = (playlists) => {
   const data = {};
 
   playlists.map((p) => {
-    if (data[p.group.title]) {
-      data[p.group.title] = [...data[p.group.title], p];
+    const title = p.group.title
+      .replace('FR ', '')
+      .replace('TV ', '')
+      .replace(' (France)', '')
+      .replace(' (FRANCE)', '')
+      .replace(' (SECOURS)', '')
+      .replace(' ( DOLBY DIGITAL)', '')
+      .replace(' (DOLBY DIGITAL)', '')
+      .replace(' ( France )', '')
+      .replace(' FHD', '');
+
+    if (data[title]) {
+      data[title] = [...data[title], p];
     } else {
-      data[p.group.title] = [p];
+      data[title] = [p];
     }
 
     return p;
@@ -29,7 +40,9 @@ const getPlaylistsByChannelQuality = (playlists) => {
 
       switch (true) {
         case isGroupName:
-          currentGroupName = item.name;
+          currentGroupName = toPascalCase(
+            item.name.replace(/[^a-zA-Z0-9]/g, "").replace("FR", "")
+          );
           groupQuality.push({
             title: currentGroupName,
             items: [],
@@ -39,7 +52,17 @@ const getPlaylistsByChannelQuality = (playlists) => {
           const groupName = groupQuality.find(
             (g) => g.title === currentGroupName
           );
-          groupName.items.push(item);
+          groupName.items.push({
+            ...item,
+            name: item.name
+              .replace('|FR| ', '')
+              // .replace('SD', '')
+              // .replace('HD', '')
+              // .replace('HEVC', '')
+              // .replace('FHD', '')
+              .replace('BKP', '')
+              .replace(' F DOLBY DIGITAL', '')
+          });
           groupQuality[currentGroupName] = groupName;
           break;
       }
