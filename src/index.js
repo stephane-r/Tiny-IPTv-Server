@@ -6,20 +6,32 @@ const bodyParser = require("koa-bodyparser");
 const { v4: uuidv4 } = require("uuid");
 const { getData } = require("./utils/data");
 const download = require("download");
+const makeId = require("./utils/makeId");
 
 const app = new Koa();
 const router = new Router();
 
-router.post("/playlist", async (ctx) => {
-  const playlistId = uuidv4();
+router.get("/login", async (ctx) => {
+  const serverUrl = ctx.request.query.url;
+  const url = new URL(serverUrl);
+  const username = url.searchParams.get("username");
 
-  fs.writeFileSync(
-    path.resolve(`playlists/${playlistId}.m3u`),
-    await download(ctx.request.body.url)
-  );
+  if (username) {
+    const id = makeId(6);
+    const playlistId = `${username}-${id}`;
+
+    fs.writeFileSync(
+      path.resolve(`playlists/${playlistId}.m3u`),
+      await download(serverUrl)
+    );
+
+    ctx.body = {
+      playlistId,
+    };
+  }
 
   ctx.body = {
-    playlistId,
+    error: "Server url not have username",
   };
 });
 
