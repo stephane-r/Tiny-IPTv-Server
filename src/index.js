@@ -11,15 +11,14 @@ const makeId = require("./utils/makeId");
 const app = new Koa();
 const router = new Router();
 
-router.get("/login", async (ctx) => {
-  const serverUrl = ctx.request.query.url;
+router.post("/login", async (ctx) => {
+  const serverUrl = ctx.request.body.url;
   const url = new URL(serverUrl);
   const username = url.searchParams.get("username");
+  const id = makeId(6);
+  const playlistId = `${username}-${id}`;
 
-  if (username) {
-    const id = makeId(6);
-    const playlistId = `${username}-${id}`;
-
+  try {
     fs.writeFileSync(
       path.resolve(`playlists/${playlistId}.m3u`),
       await download(serverUrl)
@@ -28,11 +27,11 @@ router.get("/login", async (ctx) => {
     ctx.body = {
       playlistId,
     };
+  } catch (error) {
+    console.log(error);
+    ctx.status = error.statusCode;
+    ctx.body = { error: error.statusMessage };
   }
-
-  ctx.body = {
-    error: "Server url not have username",
-  };
 });
 
 router.get("/playlist", (ctx) => {
